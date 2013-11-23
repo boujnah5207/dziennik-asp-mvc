@@ -1,0 +1,74 @@
+﻿@model PagedList.IPagedList<dziennik_asp_mvc.Models.Entities.Groups>
+@using PagedList.Mvc;
+
+<div class="panel panel-primary">
+    <div class="panel-body">
+        <div style="float:right; margin-bottom:10px;">
+            <a id="groupEditLink" class="btn btn-primary btn-small" href="/Groups/Create">
+                <span class="glyphicon glyphicon-edit icon-white" style="margin-right:5px;"></span>
+                Dodaj grupę
+            </a>
+        </div>
+        @using (Html.BeginForm("List", "Groups", new { currentFilter = ViewBag.CurrentFilter }, FormMethod.Get, new { @class = "form-inline", role = "form" }))
+        {
+            <div class="col-lg-3">
+                <input id="searchInput" name="searchString" type="text" autofocus="autofocus" class="form-control" />
+            </div>
+            <button id="sumbitSearch" type="submit" class="btn btn-primary">
+                <span class="glyphicon glyphicon-search" style="margin-right: 5px;"></span>
+                Szukaj
+            </button>
+        }
+    </div>
+</div>
+
+
+<table class="table table-bordered table-striped table-condensed">
+    <tr>
+        <th scope="col" style="text-align: center !important;">
+            @Html.ActionLink("Identyfikator grupy", "List", new { sort = ViewBag.CurrentSort, column = "numericGroupName", currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th scope="col" style="text-align: center !important;">
+            @Html.ActionLink("Nazwa grupy", "List", new { sort = ViewBag.CurrentSort, column = "groupName", currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td style="text-align: center; vertical-align: middle;">
+                @Html.DisplayFor(modelItem => item.numeric_group_name)
+            </td>
+            <td style="text-align: center; vertical-align: middle;">
+                @Html.DisplayFor(modelItem => item.group_name)
+            </td>
+            <td style="text-align: center; vertical-align: middle;">
+                <a id="subjectsInGroupLink" class="btn btn-success btn-small" href="Groups/">
+                    <span class="glyphicon glyphicon-list-alt icon-white" style="margin-right:5px;"></span>
+                    Lista przedmiotów
+                </a>
+                <a id="groupEditLink" class="btn btn-primary btn-small" href="/Groups/Edit/@{@item.id_group}">
+                    <span class="glyphicon glyphicon-edit icon-white" style="margin-right:5px;"></span>
+                    Edytuj
+                </a>
+                <a id="groupDeleteLink" class="btn btn-danger btn-small" href="/Groups/Delete/@{@item.id_group}">
+                    <span class="glyphicon glyphicon-remove-sign" style="margin-right:5px;"></span>
+                    Usuń
+                </a>
+            </td>
+        </tr>
+    }
+
+</table>
+<div style="text-align:center">
+    @Html.PagedListPager(Model, page => Url.Action("List", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }),
+        new PagedListRenderOptions
+        {
+            DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+            DisplayLinkToLastPage = PagedListDisplayMode.Always,
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+            DisplayLinkToIndividualPages = false
+        })
+</div>

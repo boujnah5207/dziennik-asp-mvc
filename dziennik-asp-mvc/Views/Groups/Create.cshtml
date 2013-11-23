@@ -1,0 +1,46 @@
+﻿@model dziennik_asp_mvc.Models.Entities.Groups
+
+@{
+    ViewBag.Title = ViewBag.Type;
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">@(ViewBag.Type == "edit" ? "Edycja" : "Tworzenie nowej")  grupy</div>
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+
+                @Html.ValidationSummary(true)
+                <div class="form-group">
+                    @Html.LabelFor(model => model.group_name, new { @class = "col-lg-2 control-label" })
+                    <div class="col-lg-2">
+                        @Html.TextBoxFor(model => model.group_name, new { @class = "form-control", @placeholder = "Nazwa grupy..." })
+                        @Html.ValidationMessageFor(model => model.group_name)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.numeric_group_name, new { @class = "col-lg-2 control-label" })
+                    <div class="col-lg-2">
+                        @Html.TextBoxFor(model => model.numeric_group_name, new { @class = "form-control", @placeholder = "Identyfikator grupy..." })
+                        @Html.ValidationMessageFor(model => model.numeric_group_name)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-2">
+                        <input id="submitGroupForm" type="submit" value="Aktualizuj dane" class="btn btn-primary btn-block" />
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
