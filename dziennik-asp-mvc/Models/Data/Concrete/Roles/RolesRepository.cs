@@ -1,9 +1,10 @@
 ﻿using dziennik_asp_mvc.Models.Data.Abstract;
+using dziennik_asp_mvc.Models.Data.Abstract.Roles;
 using System.Linq;
 
 namespace dziennik_asp_mvc.Models.Data.Concrete.Roles
 {
-    public class RolesRepository
+    public class RolesRepository : IRolesRepository
     {
         private readonly EFContext context;
 

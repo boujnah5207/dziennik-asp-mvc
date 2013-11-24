@@ -10,6 +10,7 @@ using dziennik_asp_mvc.Models.Entities;
 using dziennik_asp_mvc.Models.Data.Concrete;
 using dziennik_asp_mvc.Models.Data.Abstract;
 using PagedList;
+using dziennik_asp_mvc.Exceptions;
 
 namespace dziennik_asp_mvc.Controllers
 {
@@ -23,7 +24,7 @@ namespace dziennik_asp_mvc.Controllers
             this.groupsService = groupsService;
         }
 
-        public ActionResult List(int? page, string column = "groupName", string sort = "ASC", string searchString = "", string currentFilter="")
+        public ActionResult List(int? page, string column = "groupName", string sort = "ASC", string searchString = "", string currentFilter = "")
         {
             ViewBag.CurrentColumn = column;
             ViewBag.CurrentSort = sort == "ASC" ? "DESC" : "ASC";
@@ -50,38 +51,7 @@ namespace dziennik_asp_mvc.Controllers
             return View(groups.ToPagedList(pageNumber, pageSize));
         }
 
-        private static IQueryable<Groups> Sort(string column, string sortOrder, IQueryable<Groups> groups)
-        {
-            switch (sortOrder)
-            {
-                case "ASC":
-                    switch (column)
-                    {
-                        case "groupName":
-                            groups = groups.OrderBy(s => s.group_name);
-                            break;
-                        case "numericGroupName":
-                            groups = groups.OrderBy(s => s.numeric_group_name);
-                            break;
-                    }
-                    break;
-                case "DESC":
-                    switch (column)
-                    {
-                        case "groupName":
-                            groups = groups.OrderByDescending(s => s.group_name);
-                            break;
-                        case "numericGroupName":
-                            groups = groups.OrderByDescending(s => s.numeric_group_name);
-                            break;
-                    }
-                    break;
-                default:
-                    groups = groups.OrderBy(s => s.group_name);
-                    break;
-            }
-            return groups;
-        }
+
 
         public ActionResult Create()
         {
@@ -119,12 +89,20 @@ namespace dziennik_asp_mvc.Controllers
             ViewBag.Type = "edit";
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                TempData["Status"] = "invalid";
+                TempData["Msg"] = "Nie odnaleziono takiej grupy!";
+                return View();
             }
-            Groups groups = groupsService.FindById(id);
-            if (groups == null)
+
+            Groups groups = null;
+            try
             {
-                return HttpNotFound();
+                groups = groupsService.FindById(id);
+            }
+            catch (GroupNotFoundException ex)
+            {
+                TempData["Status"] = "invalid";
+                TempData["Msg"] = "Nie odnaleziono takiej grupy!";
             }
             return View(groups);
         }
@@ -135,7 +113,7 @@ namespace dziennik_asp_mvc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Type = "create";
+                ViewBag.Type = "edit";
                 return View(groups);
             }
 
@@ -177,6 +155,39 @@ namespace dziennik_asp_mvc.Controllers
                 groupsService.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private static IQueryable<Groups> Sort(string column, string sortOrder, IQueryable<Groups> groups)
+        {
+            switch (sortOrder)
+            {
+                case "ASC":
+                    switch (column)
+                    {
+                        case "groupName":
+                            groups = groups.OrderBy(s => s.group_name);
+                            break;
+                        case "numericGroupName":
+                            groups = groups.OrderBy(s => s.numeric_group_name);
+                            break;
+                    }
+                    break;
+                case "DESC":
+                    switch (column)
+                    {
+                        case "groupName":
+                            groups = groups.OrderByDescending(s => s.group_name);
+                            break;
+                        case "numericGroupName":
+                            groups = groups.OrderByDescending(s => s.numeric_group_name);
+                            break;
+                    }
+                    break;
+                default:
+                    groups = groups.OrderBy(s => s.group_name);
+                    break;
+            }
+            return groups;
         }
     }
 }

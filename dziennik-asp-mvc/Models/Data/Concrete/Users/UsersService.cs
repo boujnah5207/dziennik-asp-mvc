@@ -4,6 +4,7 @@ using dziennik_asp_mvc.Models.Data.Abstract;
 using dziennik_asp_mvc.Models.Data.Concrete;
 using dziennik_asp_mvc.Models.Entities;
 using System.Data.Entity;
+using dziennik_asp_mvc.Exceptions;
 
 namespace dziennik_asp_mvc.Models.Data.Concrete
 {
@@ -20,16 +21,61 @@ namespace dziennik_asp_mvc.Models.Data.Concrete
         {
             return repo.FindAll();
         }
+        public IQueryable<Users> FindAllStudentsInGroup()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IQueryable<Users> FindAllStudentsInGroupAndSubject()
+        {
+            throw new System.NotImplementedException();
+        }
 
         Users IUsersService.FindByName(string name)
         {
-            return repo.FindByName(name);
+            Users user = repo.FindByName(name);
+
+            if (user == null)
+            {
+                throw new UserNotFoundException();
+            }
+
+            return user;
         }
 
         Users IUsersService.FindById(int id)
         {
-            return repo.FindById(id);
+            Users user = repo.FindById(id);
+
+            if (user == null)
+            {
+                throw new UserNotFoundException();
+            }
+
+            return user;
         }
 
+        public void Add(Users users)
+        {
+            repo.Add(users);
+            repo.Save();
+        }
+
+        public void Edit(Users users)
+        {
+            repo.Edit(users);
+            repo.Save();
+        }
+
+        public void Delete(int id)
+        {
+            repo.Delete(id);
+            repo.Save();
+        }
+
+        public void Dispose()
+        {
+            repo.Dispose();
+        }
     }
 }
