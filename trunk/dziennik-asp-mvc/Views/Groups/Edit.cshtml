@@ -16,17 +16,17 @@
                 @Html.ValidationSummary(true)
                 @Html.HiddenFor(model => model.id_group)
                 <div class="form-group">
-                    @Html.LabelFor(model => model.group_name, new { @class = "col-lg-2 control-label", @placeholder = "Nazwa grupy..." })
+                    @Html.LabelFor(model => model.group_name, new { @class = "col-lg-2 control-label"})
                     <div class="col-lg-2">
-                        @Html.TextBoxFor(model => model.group_name, new { @class = "form-control" })
+                        @Html.TextBoxFor(model => model.group_name, new { @class = "form-control", @placeholder = "Nazwa grupy..." })
                         @Html.ValidationMessageFor(model => model.group_name)
                     </div>
                 </div>
 
                 <div class="form-group">
-                    @Html.LabelFor(model => model.numeric_group_name, new { @class = "col-lg-2 control-label", @placeholder = "Identyfikator grupy..." })
+                    @Html.LabelFor(model => model.numeric_group_name, new { @class = "col-lg-2 control-label" })
                     <div class="col-lg-2">
-                        @Html.TextBoxFor(model => model.numeric_group_name, new { @class = "form-control" })
+                        @Html.TextBoxFor(model => model.numeric_group_name, new { @class = "form-control", @placeholder = "Identyfikator grupy..." })
                         @Html.ValidationMessageFor(model => model.numeric_group_name)
                     </div>
                 </div>

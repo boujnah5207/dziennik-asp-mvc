@@ -30,5 +30,30 @@ namespace dziennik_asp_mvc.Models.Data.Concrete
         {
             return context.Users.FirstOrDefault(u => u.id_user == id);
         }
+
+        public void Add(Users user)
+        {
+            context.Users.Add(user);
+        }
+
+        public void Edit(Users user)
+        {
+            context.Entry(user).State = EntityState.Modified;
+        }
+
+        public void Delete(int id)
+        {
+            context.Users.Remove(FindById(id));
+        }
+
+        public void Save()
+        {
+            context.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            context.Dispose();
+        }
     }
 }

@@ -8,6 +8,12 @@ namespace dziennik_asp_mvc
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
+            bundles.Add(new ScriptBundle("~/bundles/chosen").Include(
+                        "~/Scripts/chosen.jquery.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/select").Include(
+                        "~/Scripts/select2.js"));
+
             bundles.Add(new ScriptBundle("~/bundles/alerts").Include(
                         "~/Scripts/alerts.js"));
 

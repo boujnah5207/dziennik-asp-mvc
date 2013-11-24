@@ -4,6 +4,7 @@ using dziennik_asp_mvc.Models.Data.Abstract;
 using dziennik_asp_mvc.Models.Data.Concrete;
 using dziennik_asp_mvc.Models.Entities;
 using System.Data.Entity;
+using dziennik_asp_mvc.Exceptions;
 
 namespace dziennik_asp_mvc.Models.Data.Concrete
 {
@@ -23,12 +24,26 @@ namespace dziennik_asp_mvc.Models.Data.Concrete
 
         Groups IGroupsService.FindByName(string name)
         {
-            return repo.FindByName(name);
+            Groups group = repo.FindByName(name);
+
+            if (group == null)
+            {
+                throw new GroupNotFoundException();
+            }
+
+            return group;
         }
 
         Groups IGroupsService.FindById(int id)
         {
-            return repo.FindById(id);
+            Groups group = repo.FindById(id);
+
+            if (group == null)
+            {
+                throw new GroupNotFoundException();
+            }
+
+            return group;
         }
 
         void IGroupsService.Add(Groups group)
