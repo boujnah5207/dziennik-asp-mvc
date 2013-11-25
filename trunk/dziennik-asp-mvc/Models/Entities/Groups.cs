@@ -20,16 +20,22 @@ namespace dziennik_asp_mvc.Models.Entities
 
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public decimal id_group { get; set; }
+        public int id_group { get; set; }
 
         [StringLength(50)]
         [Display(Name = "Nazwa grupy")]
         [Required(ErrorMessage = "Pole nie może być puste!")]
         public string group_name { get; set; }
-        
+
         [StringLength(50)]
         [Display(Name = "Identyfikator grupy")]
         public string numeric_group_name { get; set; }
+
+        [NotMapped]
+        public string full_name
+        {
+            get { return this.group_name + " (" + numeric_group_name + ")"; }
+        }
 
         public virtual ICollection<Users> Users { get; set; }
         public virtual ICollection<Subjects> Subjects { get; set; }

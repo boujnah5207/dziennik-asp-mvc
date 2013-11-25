@@ -8,6 +8,7 @@ namespace dziennik_asp_mvc.Models.Entities
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Subjects
     {
@@ -19,8 +20,15 @@ namespace dziennik_asp_mvc.Models.Entities
         }
 
         [Key]
-        public decimal id_subject { get; set; }
-        public decimal id_user { get; set; }
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        public int id_subject { get; set; }
+
+        [Display(Name = "Wykładowca")]
+        public int id_user { get; set; }
+
+        [StringLength(50)]
+        [Display(Name = "Nazwa przedmiotu")]
+        [Required(ErrorMessage = "Pole nie może być puste!")]
         public string subject_name { get; set; }
 
         public virtual ICollection<Final_Grades> Final_Grades { get; set; }

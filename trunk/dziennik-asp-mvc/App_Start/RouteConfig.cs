@@ -12,19 +12,89 @@ namespace dziennik_asp_mvc
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            
+            routes.MapRoute(
+              name: "createFinal",
+              url: "Grades/Students/Create/Final",
+              defaults: new { controller = "Grades", action = "CreateFinal" },
+              namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
+          );
 
             routes.MapRoute(
-              name: "teachersList",
-              url: "Users/Teachers/",
-              defaults: new { controller = "Teachers", action = "List" },
+              name: "editFinal",
+              url: "Grades/Students/Edit/Final/{id}",
+              defaults: new { controller = "Grades", action = "EditFinal" },
               namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
+          );
+
+            routes.MapRoute(
+              name: "deleteFinal",
+              url: "Grades/Students/Delete/Final/{id}",
+              defaults: new { controller = "Grades", action = "DeleteFinal" },
+              namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
+          );
+
+            routes.MapRoute(
+               name: "createPartial",
+               url: "Grades/Students/Create/Partial",
+               defaults: new { controller = "Grades", action = "CreatePartial" },
+               namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
+           );
+
+            routes.MapRoute(
+              name: "editPartial",
+              url: "Grades/Students/Edit/Partial/{id}",
+              defaults: new { controller = "Grades", action = "EditPartial" },
+              namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
+          );
+
+            routes.MapRoute(
+              name: "deletePartial",
+              url: "Grades/Students/Delete/Partial/{id}",
+              defaults: new { controller = "Grades", action = "DeletePartial" },
+              namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
+          );
+
+            routes.MapRoute(
+                name: "creditingFormList",
+                url: "CreditingForm/",
+                defaults: new { controller = "CreditingForm", action = "List" },
+                namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
+            );
+
+            routes.MapRoute(
+                name: "teachersList",
+                url: "Users/Teachers/",
+                defaults: new { controller = "Teachers", action = "List" },
+                namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
             );
 
             routes.MapRoute(
              name: "manageTeachers",
-             url: "Users/{controller}/{action}/{id}",
+             url: "Users/Teachers/{action}/{id}",
              defaults: new { controller = "Teachers", action = "List", id = UrlParameter.Optional },
              namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
+           );
+
+            routes.MapRoute(
+             name: "studentsList",
+             url: "Users/Students/",
+             defaults: new { controller = "Students", action = "List" },
+             namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
+           );
+
+            routes.MapRoute(
+             name: "manageStudents",
+             url: "Users/Students/{action}/{id}",
+             defaults: new { controller = "Students", action = "List", id = UrlParameter.Optional },
+             namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
+           );
+
+            routes.MapRoute(
+               name: "subjectsList",
+               url: "Subjects/",
+               defaults: new { controller = "Subjects", action = "List" },
+               namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
            );
 
             routes.MapRoute(

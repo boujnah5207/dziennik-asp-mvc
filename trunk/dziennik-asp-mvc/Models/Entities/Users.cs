@@ -9,6 +9,7 @@ namespace dziennik_asp_mvc.Models.Entities
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using DataAnnotationsExtensions;
 
     public partial class Users
     {
@@ -21,9 +22,10 @@ namespace dziennik_asp_mvc.Models.Entities
 
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public decimal id_user { get; set; }
-        public decimal id_role { get; set; }
-        public Nullable<decimal> id_group { get; set; }
+        [Display(Name = "Wykładowca")]
+        public int id_user { get; set; }
+        public int id_role { get; set; }
+        public Nullable<int> id_group { get; set; }
 
         [StringLength(25)]
         [Display(Name = "Nazwa użytkownika")]
@@ -53,7 +55,17 @@ namespace dziennik_asp_mvc.Models.Entities
         public string email { get; set; }
         [Display(Name = "Status konta")]
         public bool status { get; set; }
+
+        [Range(1, 100000, ErrorMessage = "Nie wprowadzono poprawnego numeru albumu!")]
+        [Display(Name = "Numer albumu")]
         public Nullable<int> album_number { get; set; }
+
+        [NotMapped]
+        [Display(Name = "Wykładowca")]
+        public string full_name
+        {
+            get { return this.first_name +" " + last_name; }
+        }
 
         public virtual ICollection<Final_Grades> Final_Grades { get; set; }
         public virtual Groups Groups { get; set; }

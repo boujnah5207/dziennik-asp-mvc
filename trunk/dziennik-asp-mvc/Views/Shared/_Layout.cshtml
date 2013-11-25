@@ -21,12 +21,11 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Oceny", "Index", "Home")</li>
-                    <li>@Html.ActionLink("Formy zaliczeń", "About", "Home")</li>
-                    @*<li>@Html.ActionLink("Wykładowcy", "Teachers", "List")</li>*@
+                    <li>@Html.ActionLink("Oceny", "List", "Grades")</li>
+                    <li>@Html.RouteLink("Formy zaliczeń", "creditingFormList")</li>
                     <li>@Html.RouteLink("Wykładowcy","teachersList")</li>
-                    <li>@Html.ActionLink("Studenci", "Index", "Home")</li>
-                    <li>@Html.ActionLink("Przedmioty", "About", "Home")</li>
+                    <li>@Html.RouteLink("Studenci", "studentsList")</li>
+                    <li>@Html.RouteLink("Przedmioty", "subjectsList")</li>
                     <li>@Html.ActionLink("Grupy", "List", "Groups")</li>
                 </ul>
 
@@ -68,6 +67,14 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/alerts")
+    @Scripts.Render("~/bundles/chosen")
+    @Scripts.Render("~/bundles/select")
+    @Scripts.Render("~/bundles/cascades")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.chzn-select').select2({});
+        });
+    </script>
     @RenderSection("scripts", required: false)
 </body>
 </html>

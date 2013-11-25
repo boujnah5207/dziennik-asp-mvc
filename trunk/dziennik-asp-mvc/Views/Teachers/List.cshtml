@@ -1,4 +1,5 @@
-﻿@model IEnumerable<dziennik_asp_mvc.Models.Entities.Users>
+﻿@model PagedList.IPagedList<dziennik_asp_mvc.Models.Entities.Users>
+@using PagedList.Mvc;
 
 <div class="panel panel-primary">
     <div class="panel-body">
@@ -81,3 +82,14 @@
     }
 
 </table>
+<div style="text-align:center">
+    @Html.PagedListPager(Model, page => Url.Action("List", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }),
+        new PagedListRenderOptions
+        {
+            DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+            DisplayLinkToLastPage = PagedListDisplayMode.Always,
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+            DisplayLinkToIndividualPages = false
+        })
+</div>

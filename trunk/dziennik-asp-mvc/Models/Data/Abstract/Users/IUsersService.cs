@@ -10,8 +10,8 @@ namespace dziennik_asp_mvc.Models.Data.Abstract
     public interface IUsersService
     {
         IQueryable<Users> FindAll();
-        IQueryable<Users> FindAllStudentsInGroup();
-        IQueryable<Users> FindAllStudentsInGroupAndSubject();
+        IQueryable<Users> FindAllTeachers();
+        IQueryable<Users> FindAllStudentsInGroup(int id);
         Users FindByName(string name);
         Users FindById(int id);
         void Add(Users users);

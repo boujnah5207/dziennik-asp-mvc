@@ -21,14 +21,15 @@ namespace dziennik_asp_mvc.Models.Data.Concrete
         {
             return repo.FindAll();
         }
-        public IQueryable<Users> FindAllStudentsInGroup()
+
+        public IQueryable<Users> FindAllTeachers()
         {
-            throw new System.NotImplementedException();
+            return repo.FindAll().Where(u => u.Roles.role_name == "Wykładowca");
         }
 
-        public IQueryable<Users> FindAllStudentsInGroupAndSubject()
+        public IQueryable<Users> FindAllStudentsInGroup(int id)
         {
-            throw new System.NotImplementedException();
+            return repo.FindAll().Where(u => u.Roles.role_name == "Student").Where(u => u.Groups.id_group == id);
         }
 
         Users IUsersService.FindByName(string name)
