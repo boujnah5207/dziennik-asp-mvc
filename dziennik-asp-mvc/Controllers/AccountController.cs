@@ -57,7 +57,7 @@ namespace dziennik_asp_mvc.Controllers
                         //        action = "Profile"
                         //    });
                         //}
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("List", "Grades");
                     }
                 }
                 else

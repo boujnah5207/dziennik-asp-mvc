@@ -12,6 +12,7 @@ using dziennik_asp_mvc.Models.Data.Abstract;
 using dziennik_asp_mvc.Models.Data.Abstract.Roles;
 using System.Web.Security;
 using dziennik_asp_mvc.Exceptions;
+using PagedList;
 
 namespace dziennik_asp_mvc.Controllers
 {
@@ -29,10 +30,34 @@ namespace dziennik_asp_mvc.Controllers
             this.groupsService = groupsService;
         }
 
-        public ActionResult List()
+        public ActionResult List(int? page, string column = "login", string sort = "ASC", string searchString = "", string currentFilter = "")
         {
-            var teachers = usersService.FindAll().Where(u => u.Roles.role_name == "Wykładowca");
-            return View(teachers);
+            ViewBag.CurrentColumn = column;
+            ViewBag.CurrentSort = sort == "ASC" ? "DESC" : "ASC";
+
+            if (String.IsNullOrEmpty(searchString))
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+            var teachers = usersService.FindAllTeachers();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                teachers = teachers.Where(s => s.login.ToUpper().Contains(searchString.ToUpper()) 
+                    || s.first_name.ToUpper().Contains(searchString.ToUpper())
+                    || s.last_name.ToUpper().Contains(searchString.ToUpper())
+                    || s.email.ToUpper().Contains(searchString.ToUpper()));
+            }
+
+            teachers = Sort(column, sort, teachers);
+
+            int pageSize = 5;
+            int pageNumber = (page.HasValue ? page.Value : 1); // Jeśli page == null to page = 1
+
+            return View(teachers.ToPagedList(pageNumber, pageSize));
         }
 
         public ActionResult Create()
@@ -52,7 +77,8 @@ namespace dziennik_asp_mvc.Controllers
                 return View(users);
             }
 
-            try { 
+            try
+            {
                 Users foundUser = usersService.FindByName(users.login);
 
                 if (foundUser != null)
@@ -67,10 +93,7 @@ namespace dziennik_asp_mvc.Controllers
                 TempData["Msg"] = "Taki użytkownik już istnieje!";
                 return View(users);
             }
-            catch (UserNotFoundException ex)
-            {
-
-            }
+            catch (UserNotFoundException ex) { }
 
             try
             {
@@ -138,14 +161,20 @@ namespace dziennik_asp_mvc.Controllers
             return RedirectToAction("List");
         }
 
-        // POST: /Teachers/Delete/5
-        [HttpPost]
-        public ActionResult Delete(decimal id)
+        [HttpGet]
+        public ActionResult Delete(int id)
         {
-            //Users users = db.Users.Find(id);
-            //db.Users.Remove(users);
-            //db.SaveChanges();
-            //return RedirectToAction("Index");
+            try
+            {
+                usersService.Delete(id);
+                TempData["Status"] = "success";
+                TempData["Msg"] = "Pomyślnie usunięto wykładowcę!";
+            }
+            catch (Exception e)
+            {
+                TempData["Status"] = "invalid";
+                TempData["Msg"] = "Nie udało się usunąć wykładowcy!";
+            }
             return RedirectToAction("List");
         }
 
@@ -156,6 +185,57 @@ namespace dziennik_asp_mvc.Controllers
                 usersService.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private static IQueryable<Users> Sort(string column, string sortOrder, IQueryable<Users> users)
+        {
+            switch (sortOrder)
+            {
+                case "ASC":
+                    switch (column)
+                    {
+                        case "login":
+                            users = users.OrderBy(s => s.login);
+                            break;
+                        case "firstName":
+                            users = users.OrderBy(s => s.first_name);
+                            break;
+                        case "lastName":
+                            users = users.OrderBy(s => s.last_name);
+                            break;
+                        case "email":
+                            users = users.OrderBy(s => s.email);
+                            break;
+                        case "status":
+                            users = users.OrderBy(s => s.status);
+                            break;
+                    }
+                    break;
+                case "DESC":
+                    switch (column)
+                    {
+                        case "login":
+                            users = users.OrderByDescending(s => s.login);
+                            break;
+                        case "firstName":
+                            users = users.OrderByDescending(s => s.first_name);
+                            break;
+                        case "lastName":
+                            users = users.OrderByDescending(s => s.last_name);
+                            break;
+                        case "email":
+                            users = users.OrderByDescending(s => s.email);
+                            break;
+                        case "status":
+                            users = users.OrderByDescending(s => s.status);
+                            break;
+                    }
+                    break;
+                default:
+                    users = users.OrderBy(s => s.login);
+                    break;
+            }
+            return users;
         }
     }
 }

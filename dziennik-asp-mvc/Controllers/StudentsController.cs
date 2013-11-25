@@ -8,130 +8,242 @@ using System.Web;
 using System.Web.Mvc;
 using dziennik_asp_mvc.Models.Entities;
 using dziennik_asp_mvc.Models.Data.Concrete;
+using dziennik_asp_mvc.Models.Data.Abstract;
+using dziennik_asp_mvc.Models.Data.Abstract.Roles;
+using dziennik_asp_mvc.Exceptions;
+using System.Web.Security;
+using PagedList;
 
 namespace dziennik_asp_mvc.Controllers
 {
     public class StudentsController : Controller
     {
-        private EFContext db = new EFContext();
+        private IUsersService usersService;
+        private IRolesService rolesService;
+        private IGroupsService groupsService;
 
-        // GET: /Students/
-        public ActionResult Index()
+        public StudentsController(IUsersService usersService, IGroupsService groupsService, IRolesService rolesService)
         {
-            var users = db.Users.Include(u => u.Groups).Include(u => u.Roles);
-            return View(users.ToList());
+            this.usersService = usersService;
+            this.rolesService = rolesService;
+            this.groupsService = groupsService;
+        }
+        [HttpGet]
+        public ActionResult List(int? page, int groupId = 1, string column = "login", string sort = "ASC")
+        {
+            ViewBag.CurrentColumn = column;
+            ViewBag.CurrentSort = sort == "ASC" ? "DESC" : "ASC";
+            ViewBag.Groups = new SelectList(groupsService.FindAll, "id_group", "full_name");
+
+            var students = usersService.FindAllStudentsInGroup(groupId);
+            students = Sort(column, sort, students);
+
+            int pageSize = 5;
+            int pageNumber = (page.HasValue ? page.Value : 1); // Jeśli page == null to page = 1
+
+            return View(students.ToPagedList(pageNumber, pageSize));
         }
 
-        // GET: /Students/Details/5
-        public ActionResult Details(decimal id)
+        [HttpPost]
+        public ActionResult Group(int? page, int groupId = 1, string column = "login", string sort = "ASC")
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Users users = db.Users.Find(id);
-            if (users == null)
-            {
-                return HttpNotFound();
-            }
-            return View(users);
+            ViewBag.CurrentColumn = column;
+            ViewBag.CurrentSort = sort == "ASC" ? "DESC" : "ASC";
+            ViewBag.Groups = new SelectList(groupsService.FindAll, "id_group", "full_name");
+
+            var students = usersService.FindAllStudentsInGroup(groupId);
+            students = Sort(column, sort, students);
+
+            int pageSize = 5;
+            int pageNumber = (page.HasValue ? page.Value : 1); // Jeśli page == null to page = 1
+
+            return View("List",students.ToPagedList(pageNumber, pageSize));
         }
 
-        // GET: /Students/Create
         public ActionResult Create()
         {
-            ViewBag.id_group = new SelectList(db.Groups, "id_group", "group_name");
-            ViewBag.id_role = new SelectList(db.Roles, "id_role", "role_name");
+            ViewBag.Type = "create";
+            ViewBag.Groups = new SelectList(groupsService.FindAll, "id_group", "full_name");
+
             return View();
         }
 
-        // POST: /Students/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include="id_user,id_role,id_group,login,password,first_name,last_name,email,status,album_number")] Users users)
+        public ActionResult Create([Bind(Include = "id_user,id_group,login,password,first_name,last_name,album_number,email,status")] Users users)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                db.Users.Add(users);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                ViewBag.Type = "create";
+                return View(users);
             }
 
-            ViewBag.id_group = new SelectList(db.Groups, "id_group", "group_name", users.id_group);
-            ViewBag.id_role = new SelectList(db.Roles, "id_role", "role_name", users.id_role);
-            return View(users);
+            try
+            {
+                Users foundUser = usersService.FindByName(users.login);
+
+                if (foundUser != null)
+                {
+                    throw new UserNameAlreadyExistsException();
+                }
+            }
+            catch (UserNameAlreadyExistsException ex)
+            {
+                ViewBag.Type = "create";
+                TempData["Status"] = "invalid";
+                TempData["Msg"] = "Taki użytkownik już istnieje!";
+                return View(users);
+            }
+            catch (UserNotFoundException ex) { }
+
+            try
+            {
+                users.Roles = rolesService.FindByName("Student");
+                users.password = FormsAuthentication.HashPasswordForStoringInConfigFile(users.password, "md5");
+                usersService.Add(users);
+                TempData["Status"] = "success";
+                TempData["Msg"] = "Nowy wykładowca został dodany!";
+            }
+            catch (Exception e)
+            {
+                TempData["Status"] = "invalid";
+                TempData["Msg"] = "Nie udało się dodać nowego wykładowcy!";
+            }
+            return RedirectToAction("List");
         }
 
-        // GET: /Students/Edit/5
-        public ActionResult Edit(decimal id)
+        public ActionResult Edit(int id)
         {
+            ViewBag.Type = "edit";
+            ViewBag.Groups = new SelectList(groupsService.FindAll, "id_group", "full_name");
+
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                throw new UserNotFoundException();
             }
-            Users users = db.Users.Find(id);
-            if (users == null)
+
+            Users users = null;
+
+            try
             {
-                return HttpNotFound();
+                users = usersService.FindById(id);
+
+                return View(users);
             }
-            ViewBag.id_group = new SelectList(db.Groups, "id_group", "group_name", users.id_group);
-            ViewBag.id_role = new SelectList(db.Roles, "id_role", "role_name", users.id_role);
-            return View(users);
+            catch (UserNotFoundException ex)
+            {
+                TempData["Status"] = "invalid";
+                TempData["Msg"] = "Nie znaleziono użytkownika!";
+                return RedirectToAction("List");
+            }
         }
 
-        // POST: /Students/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include="id_user,id_role,id_group,login,password,first_name,last_name,email,status,album_number")] Users users)
+        public ActionResult Edit([Bind(Include = "id_user,id_group,id_role,login,password,first_name,last_name,email,status,album_number")] Users users)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                db.Entry(users).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                ViewBag.Type = "edit";
+                return View(users);
             }
-            ViewBag.id_group = new SelectList(db.Groups, "id_group", "group_name", users.id_group);
-            ViewBag.id_role = new SelectList(db.Roles, "id_role", "role_name", users.id_role);
-            return View(users);
+
+            try
+            {
+                users.password = FormsAuthentication.HashPasswordForStoringInConfigFile(users.password, "md5");
+                usersService.Edit(users);
+                TempData["Status"] = "success";
+                TempData["Msg"] = "Aktualizacja wykładowcy przebiegła pomyślnie!";
+            }
+            catch (Exception e)
+            {
+                TempData["Status"] = "invalid";
+                TempData["Msg"] = "Nie udało się zaktualizować wykładowcy!";
+            }
+            return RedirectToAction("List");
         }
 
-        // GET: /Students/Delete/5
-        public ActionResult Delete(decimal id)
+        [HttpGet]
+        public ActionResult Delete(int id)
         {
-            if (id == null)
+            try
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                usersService.Delete(id);
+                TempData["Status"] = "success";
+                TempData["Msg"] = "Pomyślnie usunięto wykładowcę!";
             }
-            Users users = db.Users.Find(id);
-            if (users == null)
+            catch (Exception e)
             {
-                return HttpNotFound();
+                TempData["Status"] = "invalid";
+                TempData["Msg"] = "Nie udało się usunąć wykładowcy!";
             }
-            return View(users);
-        }
-
-        // POST: /Students/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(decimal id)
-        {
-            Users users = db.Users.Find(id);
-            db.Users.Remove(users);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("List");
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                usersService.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private static IQueryable<Users> Sort(string column, string sortOrder, IQueryable<Users> users)
+        {
+            switch (sortOrder)
+            {
+                case "ASC":
+                    switch (column)
+                    {
+                        case "login":
+                            users = users.OrderBy(s => s.login);
+                            break;
+                        case "firstName":
+                            users = users.OrderBy(s => s.first_name);
+                            break;
+                        case "lastName":
+                            users = users.OrderBy(s => s.last_name);
+                            break;
+                        case "email":
+                            users = users.OrderBy(s => s.email);
+                            break;
+                        case "album_number":
+                            users = users.OrderBy(s => s.album_number);
+                            break;
+                        case "status":
+                            users = users.OrderBy(s => s.status);
+                            break;
+                    }
+                    break;
+                case "DESC":
+                    switch (column)
+                    {
+                        case "login":
+                            users = users.OrderByDescending(s => s.login);
+                            break;
+                        case "firstName":
+                            users = users.OrderByDescending(s => s.first_name);
+                            break;
+                        case "lastName":
+                            users = users.OrderByDescending(s => s.last_name);
+                            break;
+                        case "email":
+                            users = users.OrderByDescending(s => s.email);
+                            break;
+                        case "album_number":
+                            users = users.OrderByDescending(s => s.album_number);
+                            break;
+                        case "status":
+                            users = users.OrderByDescending(s => s.status);
+                            break;
+                    }
+                    break;
+                default:
+                    users = users.OrderBy(s => s.login);
+                    break;
+            }
+            return users;
         }
     }
 }

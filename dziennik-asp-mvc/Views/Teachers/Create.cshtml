@@ -7,7 +7,7 @@
 <div class="panel panel-primary">
     <div class="panel-heading">@(ViewBag.Type == "edit" ? "Edycja" : "Dodawanie nowego")  wykładowcy</div>
     <div class="panel-body">
-        @using (Html.BeginForm())
+        @using (Html.BeginForm("Create","Teachers",FormMethod.Post))
         {
             @Html.AntiForgeryToken()
 

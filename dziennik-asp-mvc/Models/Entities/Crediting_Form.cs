@@ -18,7 +18,11 @@ namespace dziennik_asp_mvc.Models.Entities
         }
 
         [Key]
-        public decimal id_crediting_form { get; set; }
+        public int id_crediting_form { get; set; }
+       
+        [StringLength(100)]
+        [Display(Name = "Forma zaliczenia")]
+        [Required(ErrorMessage = "Pole nie może być puste!")]
         public string name { get; set; }
 
         public virtual ICollection<Final_Grades> Final_Grades { get; set; }

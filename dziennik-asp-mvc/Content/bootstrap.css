@@ -1991,8 +1991,8 @@ textarea.input-lg {
   padding: 6px 12px;
   margin-bottom: 0;
   font-size: 14px;
-  font-weight: normal;
-  line-height: 1.428571429;
+  font-weight: normal !important;
+  line-height: 1.428571429 !important;
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;

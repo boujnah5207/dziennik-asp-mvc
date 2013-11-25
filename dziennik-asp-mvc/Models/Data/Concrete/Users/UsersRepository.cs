@@ -20,7 +20,7 @@ namespace dziennik_asp_mvc.Models.Data.Concrete
         {
             return from user in context.Users select user;
         }
-
+        
         public Users FindByName(string name)
         {
             return context.Users.FirstOrDefault(u => u.login == name);

@@ -32,7 +32,11 @@ namespace dziennik_asp_mvc.Infrastructure
         private void AddBindings()
         {
             kernel.Bind<IUnitOfWork>().To<EFContext>().InRequestScope();
+            AddPartialGradesBindings();
+            AddFinalGradesBindings();
             AddGroupsBindings();
+            AddCreditingFormBindings();
+            AddSubjectsBindings();
             AddUsersBindings();
             AddRolesBindings();
         }
@@ -52,6 +56,26 @@ namespace dziennik_asp_mvc.Infrastructure
         {
             kernel.Bind<IRolesRepository>().To<RolesRepository>();
             kernel.Bind<IRolesService>().To<RolesService>();
+        }
+        private void AddSubjectsBindings()
+        {
+            kernel.Bind<ISubjectsRepository>().To<SubjectsRepository>();
+            kernel.Bind<ISubjectsService>().To<SubjectsService>();
+        }
+        private void AddCreditingFormBindings()
+        {
+            kernel.Bind<ICreditingFormRepository>().To<CreditingFormRepository>();
+            kernel.Bind<ICreditingFormService>().To<CreditingFormService>();
+        }
+        private void AddPartialGradesBindings()
+        {
+            kernel.Bind<IPartialGradesRepository>().To<PartialGradesRepository>();
+            kernel.Bind<IPartialGradesService>().To<PartialGradesService>();
+        }
+        private void AddFinalGradesBindings()
+        {
+            kernel.Bind<IFinalGradesRepository>().To<FinalGradesRepository>();
+            kernel.Bind<IFinalGradesService>().To<FinalGradesService>();
         }
     }
 }
