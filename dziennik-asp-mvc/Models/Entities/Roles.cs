@@ -18,6 +18,8 @@ namespace dziennik_asp_mvc.Models.Entities
 
         [Key]
         public int id_role { get; set; }
+
+        [Display(Name = "Rola")]
         public string role_name { get; set; }
 
         public virtual ICollection<Users> Users { get; set; }

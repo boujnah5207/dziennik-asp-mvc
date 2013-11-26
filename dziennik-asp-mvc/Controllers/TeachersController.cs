@@ -16,7 +16,7 @@ using PagedList;
 
 namespace dziennik_asp_mvc.Controllers
 {
-    [Authorize(Roles = "Administrator,Wykładowca")]
+    [Authorize(Roles = "Administrator,Wykładowca,Student")]
     public class TeachersController : Controller
     {
         private IUsersService usersService;
@@ -58,6 +58,30 @@ namespace dziennik_asp_mvc.Controllers
             int pageNumber = (page.HasValue ? page.Value : 1); // Jeśli page == null to page = 1
 
             return View(teachers.ToPagedList(pageNumber, pageSize));
+        }
+
+        public ActionResult SubjectsForTeacher(int id)
+        {
+            try
+            {
+                Users user = usersService.FindById(id);
+
+                if (user.Roles.role_name == "Student" || user.Roles.role_name == "Administator")
+                {
+                    throw new UserNotFoundException();
+                }
+
+                var teacher = user.Subjects;
+                ViewBag.SelectedTeacher = user.full_name;
+
+                return View("SubjectsForTeacher", teacher);
+            }
+            catch (UserNotFoundException ex)
+            {
+                TempData["Status"] = "invalid";
+                TempData["Msg"] = "Nie odnaleziono takiego użytkownika!";
+            }
+            return RedirectToAction("List");
         }
 
         public ActionResult Create()
@@ -120,13 +144,18 @@ namespace dziennik_asp_mvc.Controllers
                 throw new UserNotFoundException();
             }
 
-            Users users = null;
+            Users user = null;
 
             try
             {
-                users = usersService.FindById(id);
+                user = usersService.FindById(id);
 
-                return View(users);
+                if (user.Roles.role_name == "Student" || user.Roles.role_name == "Administator")
+                {
+                    throw new UserNotFoundException();
+                }
+
+                return View(user);
             }
             catch (UserNotFoundException ex)
             {
@@ -166,7 +195,14 @@ namespace dziennik_asp_mvc.Controllers
         {
             try
             {
+                Users user = usersService.FindById(id);
+
+                if (user.Roles.role_name == "Student" || user.Roles.role_name == "Administator")
+                {
+                    throw new UserNotFoundException();
+                }
                 usersService.Delete(id);
+
                 TempData["Status"] = "success";
                 TempData["Msg"] = "Pomyślnie usunięto wykładowcę!";
             }

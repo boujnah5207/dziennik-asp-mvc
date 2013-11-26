@@ -16,6 +16,7 @@ using PagedList;
 
 namespace dziennik_asp_mvc.Controllers
 {
+    [Authorize(Roles = "Administrator,Wykładowca")]
     public class StudentsController : Controller
     {
         private IUsersService usersService;
@@ -126,6 +127,13 @@ namespace dziennik_asp_mvc.Controllers
 
             try
             {
+                Users user = usersService.FindById(id);
+
+                if (user.Roles.role_name == "Wykładowca" || user.Roles.role_name == "Administator")
+                {
+                    throw new UserNotFoundException();
+                }
+
                 users = usersService.FindById(id);
 
                 return View(users);
@@ -168,6 +176,13 @@ namespace dziennik_asp_mvc.Controllers
         {
             try
             {
+                Users user = usersService.FindById(id);
+
+                if (user.Roles.role_name == "Wykładowca" || user.Roles.role_name == "Administator")
+                {
+                    throw new UserNotFoundException();
+                }
+
                 usersService.Delete(id);
                 TempData["Status"] = "success";
                 TempData["Msg"] = "Pomyślnie usunięto wykładowcę!";

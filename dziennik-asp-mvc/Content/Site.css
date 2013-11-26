@@ -38,3 +38,8 @@ input[type="checkbox"].input-validation-error {
     text-color: red;
     background: #ffb1a6;
 }
+
+.profile {
+    float:left;
+    padding-top:7px;
+}
