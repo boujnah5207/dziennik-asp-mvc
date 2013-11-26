@@ -337,6 +337,7 @@
     <Content Include="Views\Grades\List.cshtml" />
     <Content Include="Views\Grades\Final\Create.cshtml" />
     <Content Include="Views\Grades\Final\Edit.cshtml" />
+    <Content Include="Views\Groups\SubjectsInGroup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

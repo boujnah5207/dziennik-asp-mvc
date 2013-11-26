@@ -98,6 +98,13 @@ namespace dziennik_asp_mvc
            );
 
             routes.MapRoute(
+               name: "subjectsInGroupList",
+               url: "Groups/Subjects/{id}",
+               defaults: new { controller = "Groups", action = "SubjectsInGroup" },
+               namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
+           );
+
+            routes.MapRoute(
                 name: "groupsList",
                 url: "Groups/",
                 defaults: new { controller = "Groups", action = "List" },
