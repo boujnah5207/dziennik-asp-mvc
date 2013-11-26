@@ -1,0 +1,79 @@
+﻿@model PagedList.IPagedList<dziennik_asp_mvc.Models.Entities.Subjects>
+@using PagedList.Mvc;
+<div class="panel panel-primary">
+    <div class="panel-body">
+        <div style="float:right; margin-bottom:10px;">
+            <a class="btn btn-primary btn-small" href="/Subjects/Create">
+                <span class="glyphicon glyphicon-plus-sign icon-white" style="margin-right:5px;"></span>
+                Dodaj przedmiot
+            </a>
+        </div>
+        @using (Html.BeginForm("List", "Subjects", new { currentFilter = ViewBag.CurrentFilter }, FormMethod.Get, new { @class = "form-inline", role = "form" }))
+        {
+            <div class="col-lg-3">
+                <input id="searchInput" name="searchString" type="text" autofocus="autofocus" class="form-control" />
+            </div>
+            <button id="sumbitSearch" type="submit" class="btn btn-primary">
+                <span class="glyphicon glyphicon-search" style="margin-right: 5px;"></span>
+                Szukaj
+            </button>
+        }
+    </div>
+</div>
+
+
+<table class="table table-bordered table-striped table-condensed">
+    <tr>
+        <th scope="col" style="text-align: center !important;">
+            @Html.ActionLink("Nazwa przedmiotu", "List", new { sort = ViewBag.CurrentSort, column = "subjectName", currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th scope="col" style="text-align: center !important;">
+            @Html.ActionLink("Wykładowca", "List", new { sort = ViewBag.CurrentSort, column = "fullName", currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th scope="col" style="text-align: center !important;">
+            Grupa
+        </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td style="text-align: center; vertical-align: middle;">
+                @Html.DisplayFor(modelItem => item.subject_name)
+            </td>
+            <td style="text-align: center; vertical-align: middle;">
+                @Html.DisplayFor(modelItem => item.Users.full_name)
+            </td>
+            <td>
+                <select id="groups" multiple="multiple" disabled class="chzn-select btn-block">
+                    @foreach (var group in item.Groups)
+                    {
+                        <option selected="selected" value="@{@group.id_group}">@{@group.full_name}</option>
+                    }
+                </select>
+            </td>
+            <td style="text-align: center; vertical-align: middle;">
+                <a id="teacherEditLink" class="btn btn-primary btn-small" href="/Subjects/Edit/@{@item.id_subject}">
+                    <span class="glyphicon glyphicon-edit icon-white" style="margin-right:5px;"></span>
+                    Edytuj
+                </a>
+                <a id="teacherDeleteLink" class="btn btn-danger btn-small" href="/Subjects/Delete/@{@item.id_subject}">
+                    <span class="glyphicon glyphicon-remove-sign" style="margin-right:5px;"></span>
+                    Usuń
+                </a>
+            </td>
+        </tr>
+    }
+
+</table>
+<div style="text-align:center">
+    @Html.PagedListPager(Model, page => Url.Action("List", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }),
+        new PagedListRenderOptions
+        {
+            DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+            DisplayLinkToLastPage = PagedListDisplayMode.Always,
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+            DisplayLinkToIndividualPages = false
+        })
+</div>

@@ -1,0 +1,119 @@
+﻿@model dziennik_asp_mvc.ViewModels.ProfileViewModel
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Profil</div>
+    <div class="panel-body">
+        @using (Html.BeginForm("ChangeProfile","User",FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true)
+                @Html.HiddenFor(model => model.Users.id_user)
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Users.first_name, new { @class = "col-lg-2 control-label" })
+                    <div class="col-lg-3">
+                        @Html.TextBoxFor(model => model.Users.first_name, new { @class = "form-control", @placeholder = "Imię..." })
+                        @Html.ValidationMessageFor(model => model.Users.first_name)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Users.last_name, new { @class = "col-lg-2 control-label" })
+                    <div class="col-lg-3">
+                        @Html.TextBoxFor(model => model.Users.last_name, new { @class = "form-control", @placeholder = "Nazwisko..." })
+                        @Html.ValidationMessageFor(model => model.Users.last_name)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Users.login, new { @class = "col-lg-2 control-label" })
+                    <div class="col-lg-3">
+                        @Html.TextBoxFor(model => model.Users.login, new { @class = "form-control", @placeholder = "Nazwa użytkownika..." })
+                        @Html.ValidationMessageFor(model => model.Users.login)
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Users.email, new { @class = "col-lg-2 control-label" })
+                    <div class="col-lg-3">
+                        @Html.TextBoxFor(model => model.Users.email, new { @class = "form-control", @placeholder = "Email..." })
+                        @Html.ValidationMessageFor(model => model.Users.email)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Users.Roles.role_name, new { @class = "col-lg-2 control-label" })
+                    <div class="col-lg-3">
+                       @Html.DropDownListFor(model => model.Users.id_role, (IEnumerable<SelectListItem>)ViewBag.Roles, new { @class = "chzn-select btn-block" })
+                       @Html.ValidationMessageFor(model => model.Users.id_role)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-2">
+                        <input type="submit" value="Aktualizuj dane" class="btn btn-primary btn-block" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Hasło</div>
+    <div class="panel-body">
+        @using (Html.BeginForm("ChangePassword", "User", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model=> model.Users.id_user)
+            @Html.HiddenFor(model => model.Users.id_role)
+            @Html.HiddenFor(model=> model.Users.login)
+            @Html.HiddenFor(model => model.Users.password)
+            @Html.HiddenFor(model => model.Users.first_name)
+            @Html.HiddenFor(model => model.Users.last_name)
+            @Html.HiddenFor(model => model.Users.email)
+            @Html.HiddenFor(model => model.Users.status)
+            @Html.HiddenFor(model => model.Users.id_group)
+            @Html.HiddenFor(model => model.Users.album_number)
+            @Html.HiddenFor(model => model.Users.id_group)
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true)
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ActualPassword, new { @class = "col-lg-2 control-label" })
+                    <div class="col-lg-3">
+                        @Html.PasswordFor(model => model.ActualPassword, new { @class = "form-control", @placeholder = "Aktualne hasło..." })
+                        @Html.ValidationMessageFor(model => model.ActualPassword)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.NewPassword, new { @class = "col-lg-2 control-label" })
+                    <div class="col-lg-3">
+                        @Html.PasswordFor(model => model.NewPassword, new { @class = "form-control", @placeholder = "Nowe hasło..." })
+                        @Html.ValidationMessageFor(model => model.NewPassword)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RepeatedPassword, new { @class = "col-lg-2 control-label" })
+                    <div class="col-lg-3">
+                        @Html.PasswordFor(model => model.RepeatedPassword, new { @class = "form-control", @placeholder = "Potwierdź nowe hasło..." })
+                        @Html.ValidationMessageFor(model => model.RepeatedPassword)
+                    </div>
+                </div>
+              
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-2">
+                        <input type="submit" value="Aktualizuj dane" class="btn btn-primary btn-block" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

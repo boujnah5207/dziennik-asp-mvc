@@ -1,0 +1,119 @@
+﻿@model IEnumerable<dziennik_asp_mvc.Models.Entities.Users>
+
+
+@using (Html.BeginForm("Show", "Grades", FormMethod.Post, new { @class = "form-inline", role = "form" }))
+{
+    <table class="table table-striped table-bordered">
+        <tbody>
+            <tr>
+                <td style="text-align: center !important; width:25%;">
+                    <label class="control-label">Grupa</label>
+                    @Html.DropDownList("id_group", (IEnumerable<SelectListItem>)ViewBag.Groups, new { @id = "allGroups", @class = "chzn-select btn-block" })
+                </td>
+                <td style="text-align: center !important; width:25%;">
+                    <label class="control-label">Przedmiot</label>
+                    @Html.DropDownList("id_subject", (IEnumerable<SelectListItem>)ViewBag.Subjects, new { @id = "subjectsInGroup", @class = "chzn-select btn-block" })
+                </td>
+                <td style="text-align: center !important; width:25%;vertical-align: middle;">
+                    <button id="sumbitSearch" type="submit" class="btn btn-primary glyphicon glyphicon-search">
+                        Przeglądaj...
+                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary">Dodaj ocenę</button>
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only" />
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/Grades/Students/Create/Partial">Dodaj ocenę cząstkową</a></li>
+                            <li><a href="/Grades/Students/Create/Final">Dodaj ocenę końcową</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered table-striped table-condensed">
+        <thead>
+            <tr>
+                <th scope="col" style="text-align: center !important;">Imię i nazwisko</th>
+                <th scope="col" style="text-align: center !important;" colspan="@{@ViewBag.MaxPartialGrades}">Oceny cząstkowe</th>
+                @if (@ViewBag.MaxFinalGrades != 0)
+                {
+                    <th scope="col" style="text-align: center !important;">Ocena końcowa</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="text-align: center; vertical-align: middle;">@item.full_name</td>
+
+                    @foreach (var partial in item.Partial_Grades)
+                    {
+                        <td style="text-align: center; vertical-align: middle;">
+                            <span>@partial.grade</span>
+
+                            @if (partial.grade != null)
+                            {
+                                <a class="btn btn-info btn-xs" title="@{@partial.description}">
+                                    <span class="icon-white glyphicon glyphicon-info-sign" style="margin:0px !important;padding: 0px 0px !important;" />
+                                </a>
+                                <a class="btn btn-primary btn-xs" href="Students/Edit/Partial/@{@partial.id_grade}">
+                                    <span class="icon-white glyphicon glyphicon-pencil" style="margin:0px !important;padding: 0px 0px !important;" />
+                                </a>
+                                <a class="btn btn-danger btn-xs" href="Students/Delete/Partial/@{@partial.id_grade}">
+                                    <span class="glyphicon glyphicon-remove icon-white" style="margin:0px !important;padding: 0px 0px !important;" />
+                                </a>
+                            }
+                        </td>
+                    }
+                    @if (item.Partial_Grades.Count == 0)
+                    {
+                        if (@ViewBag.MaxPartialGrades == 0)
+                        {
+                            <td style="text-align: center; vertical-align: middle;" />
+                        }
+                        else
+                        {
+                            for (int i = 0; i < ViewBag.MaxPartialGrades; i++)
+                            {
+                                <td style="text-align: center; vertical-align: middle;" />
+                            }
+                        }
+                    }
+
+                    @foreach (var final in item.Final_Grades)
+                    {
+                        <td style="text-align: center; vertical-align: middle;">
+                            <span>@final.grade</span>
+
+                            @if (final.grade != null)
+                            {
+                                <a class="btn btn-info btn-xs" title="@{@final.description}">
+                                    <span class="icon-white glyphicon glyphicon-info-sign" style="margin:0px !important;padding: 0px 0px !important;" />
+                                </a>
+                                <a class="btn btn-primary btn-xs" href="Students/Edit/Final/@{@final.id_final_grade}">
+                                    <span class="icon-white glyphicon glyphicon-pencil" style="margin:0px !important;padding: 0px 0px !important;" />
+                                </a>
+                                <a class="btn btn-danger btn-xs" href="Students/Delete/Final/@{@final.id_final_grade}">
+                                    <span class="glyphicon glyphicon-remove icon-white" style="margin:0px !important;padding: 0px 0px !important;" />
+                                </a>
+                            }
+                        </td>
+                    }
+                    @if (item.Final_Grades.Count == 0 && @ViewBag.MaxFinalGrades != 0)
+                    {
+                        <td style="text-align: center; vertical-align: middle;" />
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
