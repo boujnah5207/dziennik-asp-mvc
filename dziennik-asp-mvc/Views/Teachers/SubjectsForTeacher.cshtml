@@ -1,0 +1,38 @@
+﻿@model IEnumerable<dziennik_asp_mvc.Models.Entities.Subjects>
+
+<div class="panel panel-primary">
+    <div class="panel-body">
+        <div style="text-align:center;">
+            <p style="display:inline-block;"> Lista przedmiotów prowadzona przez @ViewBag.SelectedTeacher</p>
+        </div>
+
+    </div>
+</div>	
+
+<table class="table table-bordered table-striped table-condensed">
+    <tr>
+        <th scope="col" style="text-align: center !important;">
+            Nazwa przedmiotu            
+        </th>
+        <th scope="col" style="text-align: center !important;">
+            Grupa            
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td style="text-align: center; vertical-align: middle;">
+                @Html.DisplayFor(modelItem => item.subject_name)
+            </td>
+            <td style="text-align: center; vertical-align: middle;">
+                <select id="groups" multiple="multiple" disabled class="chzn-select btn-block">
+                    @foreach (var group in item.Groups)
+                    {
+                        <option selected="selected" value="@{@group.id_group}">@{@group.full_name}</option>
+                    }
+                </select>
+            </td>           
+        </tr>
+    }
+
+</table>

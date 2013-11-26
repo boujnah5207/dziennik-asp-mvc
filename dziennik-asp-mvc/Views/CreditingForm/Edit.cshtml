@@ -1,0 +1,39 @@
+﻿@model dziennik_asp_mvc.Models.Entities.Crediting_Form
+
+@{
+    ViewBag.Title = ViewBag.Type;
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">@(ViewBag.Type == "edit" ? "Edycja" : "Tworzenie nowej")  formy zaliczenia</div>
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+
+                @Html.ValidationSummary(true)
+                @Html.HiddenFor(model => model.id_crediting_form)
+                <div class="form-group">
+                    @Html.LabelFor(model => model.name, new { @class = "col-lg-2 control-label"})
+                    <div class="col-lg-2">
+                        @Html.TextBoxFor(model => model.name, new { @class = "form-control", @placeholder = "Forma zaliczenia..." })
+                        @Html.ValidationMessageFor(model => model.name)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-2">
+                        <input id="submitGroupForm" type="submit" value="Aktualizuj dane" class="btn btn-primary btn-block" />
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

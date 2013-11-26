@@ -1,0 +1,40 @@
+﻿@model IEnumerable<dziennik_asp_mvc.Models.Entities.Crediting_Form>
+
+<div class="panel panel-primary">
+    <div class="panel-body">
+        <div style="float:right; margin-bottom:10px;">
+            <a id="groupEditLink" class="btn btn-primary btn-small" href="/CreditingForm/Create">
+                <span class="glyphicon glyphicon-plus-sign icon-white" style="margin-right:5px;"></span>
+                Dodaj formę zaliczenia
+            </a>
+        </div>
+    </div>
+</div>
+
+<table class="table table-bordered table-striped table-condensed">
+    <tr>
+        <th scope="col" style="text-align: center !important;">
+            Forma zaliczenia
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td style="text-align: center; vertical-align: middle;">
+                @Html.DisplayFor(modelItem => item.name)
+            </td>
+            <td style="text-align: center; vertical-align: middle;">
+                <a id="formEditLink" class="btn btn-primary btn-small" href="/CreditingForm/Edit/@{@item.id_crediting_form}">
+                    <span class="glyphicon glyphicon-edit icon-white" style="margin-right:5px;"></span>
+                    Edytuj
+                </a>
+                <a id="formDeleteLink" class="btn btn-danger btn-small" href="/CreditingForm/Delete/@{@item.id_crediting_form}">
+                    <span class="glyphicon glyphicon-remove-sign" style="margin-right:5px;"></span>
+                    Usuń
+                </a>
+            </td>
+        </tr>
+    }
+</table>

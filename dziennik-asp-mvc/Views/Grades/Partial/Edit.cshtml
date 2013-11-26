@@ -1,0 +1,85 @@
+﻿@model dziennik_asp_mvc.ViewModels.PartialGradesViewModel
+
+@{
+    ViewBag.Title = ViewBag.Type;
+    Html.EnableClientValidation(false);
+
+}
+
+<div class="panel panel-primary">
+    <div class="panel-heading">@(ViewBag.Type == "edit" ? "Edycja" : "Dodawanie nowej")  oceny</div>
+    <div class="panel-body">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.HiddenFor(m=>m.grade.id_grade)
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true)
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">Grupa</label>
+                    <div class="col-lg-3">
+                        @Html.DropDownListFor(model => model.SelectedGroup, (IEnumerable<SelectListItem>)ViewBag.Groups, new { @id = "allGroups", @class = "chzn-select btn-block" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">Przedmiot</label>
+                    <div class="col-lg-3">
+                        @Html.DropDownListFor(model => model.grade.id_subject, (IEnumerable<SelectListItem>)ViewBag.Subjects, new { @id = "subjectsInGroup", @class = "chzn-select btn-block" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">Student</label>
+                    <div class="col-lg-3">
+                        @Html.DropDownListFor(model => model.grade.id_user, (IEnumerable<SelectListItem>)ViewBag.Users, new { @id = "studentsInGroup", @class = "chzn-select btn-block" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">Forma zaliczenia</label>
+                    <div class="col-lg-3">
+                        @Html.DropDownListFor(model => model.grade.id_crediting_form, (IEnumerable<SelectListItem>)ViewBag.CreditingForm, new { @class = "chzn-select btn-block" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.grade.grade, new { @class = "col-lg-2 control-label" })
+                    <div class="col-lg-3">
+                        @Html.TextBoxFor(model => model.grade.grade, new { @class = "form-control", @placeholder = "Ocena..." })
+                        @Html.ValidationMessageFor(model => model.grade.grade)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.grade.date, new { @class = "col-lg-2 control-label" })
+                    <div class="col-lg-3">
+                        @Html.TextBoxFor(model => model.grade.date, new { @id="gradeDate", @class = "form-control", @placeholder = "Data...",@readonly="readonly" })
+                        @Html.ValidationMessageFor(model => model.grade.date)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.grade.comment, new { @class = "col-lg-2 control-label" })
+                    <div class="col-lg-3">
+                        @Html.TextBoxFor(model => model.grade.comment, new { @class = "form-control", @placeholder = "Uwagi..." })
+                        @Html.ValidationMessageFor(model => model.grade.comment)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-2">
+                        <input type="submit" value="Aktualizuj dane" class="btn btn-primary btn-block" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    
+}
