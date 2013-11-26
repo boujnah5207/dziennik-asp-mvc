@@ -18,10 +18,12 @@ namespace dziennik_asp_mvc.Controllers
     public class GroupsController : Controller
     {
         private IGroupsService groupsService;
+        private ISubjectsService subjectsService;
 
-        public GroupsController(IGroupsService groupsService)
+        public GroupsController(IGroupsService groupsService, ISubjectsService subjectsService)
         {
             this.groupsService = groupsService;
+            this.subjectsService = subjectsService;
         }
 
         public ActionResult List(int? page, string column = "groupName", string sort = "ASC", string searchString = "", string currentFilter = "")
@@ -51,6 +53,22 @@ namespace dziennik_asp_mvc.Controllers
             return View(groups.ToPagedList(pageNumber, pageSize));
         }
 
+        public ActionResult SubjectsInGroup(int id)
+        {
+            try
+            {
+                var subjects = subjectsService.FindAllSubjectsForGroup(id);
+                ViewBag.SelectedGroup = groupsService.FindById(id).full_name;
+
+                return View("SubjectsInGroup", subjects);
+            }
+            catch (GroupNotFoundException ex)
+            {
+                TempData["Status"] = "invalid";
+                TempData["Msg"] = "Nie odnaleziono takiej grupy!";
+            }
+            return RedirectToAction("List");
+        }
 
 
         public ActionResult Create()
@@ -59,6 +77,7 @@ namespace dziennik_asp_mvc.Controllers
 
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "id_group,group_name,numeric_group_name")] Groups groups)
