@@ -61,7 +61,6 @@ namespace dziennik_asp_mvc.Models.Entities
         public Nullable<int> album_number { get; set; }
 
         [NotMapped]
-        [Display(Name = "Wykładowca")]
         public string full_name
         {
             get { return this.first_name +" " + last_name; }

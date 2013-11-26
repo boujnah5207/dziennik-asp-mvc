@@ -16,7 +16,7 @@ using dziennik_asp_mvc.Exceptions;
 
 namespace dziennik_asp_mvc.Controllers
 {
-    [Authorize(Roles = "Administrator,Wykładowca")]
+    [Authorize(Roles = "Administrator,Wykładowca,Student")]
     public class SubjectsController : Controller
     {
         private IUsersService usersService;

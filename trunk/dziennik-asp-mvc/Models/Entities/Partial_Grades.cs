@@ -20,10 +20,12 @@ namespace dziennik_asp_mvc.Models.Entities
         public int id_subject { get; set; }
 
         [Display(Name = "Ocena")]
+        [Range(2.0, 5.5)]
         public decimal grade { get; set; }
               
         [Display(Name = "Data wystawienia")]
         public string date { get; set; }
+
         [Display(Name = "Uwagi")]
         public string comment { get; set; }
 
