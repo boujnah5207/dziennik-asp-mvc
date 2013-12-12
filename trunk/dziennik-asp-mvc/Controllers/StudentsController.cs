@@ -103,12 +103,12 @@ namespace dziennik_asp_mvc.Controllers
                 users.password = FormsAuthentication.HashPasswordForStoringInConfigFile(users.password, "md5");
                 usersService.Add(users);
                 TempData["Status"] = "success";
-                TempData["Msg"] = "Nowy wykładowca został dodany!";
+                TempData["Msg"] = "Nowy student został dodany!";
             }
             catch (Exception e)
             {
                 TempData["Status"] = "invalid";
-                TempData["Msg"] = "Nie udało się dodać nowego wykładowcy!";
+                TempData["Msg"] = "Nie udało się dodać nowego studenta!";
             }
             return RedirectToAction("List");
         }
@@ -161,12 +161,12 @@ namespace dziennik_asp_mvc.Controllers
                 users.password = FormsAuthentication.HashPasswordForStoringInConfigFile(users.password, "md5");
                 usersService.Edit(users);
                 TempData["Status"] = "success";
-                TempData["Msg"] = "Aktualizacja wykładowcy przebiegła pomyślnie!";
+                TempData["Msg"] = "Aktualizacja studenta przebiegła pomyślnie!";
             }
             catch (Exception e)
             {
                 TempData["Status"] = "invalid";
-                TempData["Msg"] = "Nie udało się zaktualizować wykładowcy!";
+                TempData["Msg"] = "Nie udało się zaktualizować studenta!";
             }
             return RedirectToAction("List");
         }
@@ -185,12 +185,12 @@ namespace dziennik_asp_mvc.Controllers
 
                 usersService.Delete(id);
                 TempData["Status"] = "success";
-                TempData["Msg"] = "Pomyślnie usunięto wykładowcę!";
+                TempData["Msg"] = "Pomyślnie usunięto studenta!";
             }
             catch (Exception e)
             {
                 TempData["Status"] = "invalid";
-                TempData["Msg"] = "Nie udało się usunąć wykładowcy!";
+                TempData["Msg"] = "Nie udało się usunąć studenta!";
             }
             return RedirectToAction("List");
         }

@@ -29,7 +29,7 @@ namespace dziennik_asp_mvc.Helpers
 
             string hash = FormsAuthentication.HashPasswordForStoringInConfigFile(password.Trim(), "md5");
 
-            if (this.repository.FindAll().Any(user => (user.login == username.Trim()) && (user.password == hash)))
+            if (this.repository.FindAll().Any(user => (user.login == username.Trim()) && (user.password == hash) && user.status == true))
             {
                 return true;
             }

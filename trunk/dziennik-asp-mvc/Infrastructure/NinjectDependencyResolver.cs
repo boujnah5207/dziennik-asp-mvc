@@ -20,15 +20,7 @@ namespace dziennik_asp_mvc.Infrastructure
             kernel = new StandardKernel();
             AddBindings();
         }
-        public object GetService(Type serviceType)
-        {
-            return kernel.TryGet(serviceType);
-        }
 
-        public IEnumerable<object> GetServices(Type serviceType)
-        {
-            return kernel.GetAll(serviceType);
-        }
         private void AddBindings()
         {
             kernel.Bind<IUnitOfWork>().To<EFContext>().InRequestScope();
@@ -77,5 +69,15 @@ namespace dziennik_asp_mvc.Infrastructure
             kernel.Bind<IFinalGradesRepository>().To<FinalGradesRepository>();
             kernel.Bind<IFinalGradesService>().To<FinalGradesService>();
         }
+
+        public object GetService(Type serviceType)
+        {
+            return kernel.TryGet(serviceType);
+        }
+
+        public IEnumerable<object> GetServices(Type serviceType)
+        {
+            return kernel.GetAll(serviceType);
+        }       
     }
 }
