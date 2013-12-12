@@ -24,12 +24,8 @@ namespace dziennik_asp_mvc.Controllers
 
         public ActionResult Login()
         {
-            if (Request.IsAuthenticated && (User.IsInRole("Admin"))) // Jesli ktoś jest zalogowany i chce sie ponownie zalogować
-                return RedirectToRoute("Admin_default", new
-                {
-                    controller = "Profile",
-                    action = "Profile"
-                });                                          
+            if (Request.IsAuthenticated)
+                return RedirectToRoute("ownProfile");       
 
             return View();
         }
@@ -49,20 +45,14 @@ namespace dziennik_asp_mvc.Controllers
                     }
                     else
                     {
-                        //if (AuthorizationService.IsUserInRole(model.UserName, "Admin"))
-                        //{ // Jeśli zalogował się admin to przenieś do jego View
-                        //    return RedirectToRoute("Admin_default", new
-                        //    {
-                        //        controller = "Profile",
-                        //        action = "Profile"
-                        //    });
-                        //}
-                        return RedirectToAction("List", "Grades");
+                        return RedirectToAction("Profile", "User");
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Login lub hasło jest błędne");
+                    ModelState.AddModelError("", "Podany login może być błędny");
+                    ModelState.AddModelError("", "Podane hasło może być błędne");
+                    ModelState.AddModelError("", "Konto może być nie aktywne");
                 }
 
             }

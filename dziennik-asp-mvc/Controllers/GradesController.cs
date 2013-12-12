@@ -91,15 +91,15 @@ namespace dziennik_asp_mvc.Controllers
             {
                 foreach (Subjects subject in subjects)
                 {
-                    if (id_subject.CompareTo(subject.id_subject) == 0 &&
-                        (subject.Partial_Grades.Any(m => m.id_subject == id_subject && m.Users.id_group == id_group) 
-                        || subject.Final_Grades.Any(m => m.id_subject == id_subject && m.Users.id_group == id_group)))
+                    if (id_subject == subject.id_subject)
                     {
-                        if (user.Partial_Grades.Count > maxPartialGrades)
+                        int partialCount = user.Partial_Grades.Count(m => m.id_subject == id_subject);
+                        if (partialCount > maxPartialGrades)
                         {
-                            maxPartialGrades = user.Partial_Grades.Count;
+                            maxPartialGrades = partialCount;
                         }
-                        if (user.Final_Grades.Count > maxFinalGrades)
+
+                        if (user.Final_Grades.Count> maxFinalGrades)
                         {
                             maxFinalGrades = user.Final_Grades.Count;
                         }
@@ -107,6 +107,7 @@ namespace dziennik_asp_mvc.Controllers
                     }
                 }
             }
+            ViewBag.Subject = id_subject;
             ViewBag.MaxPartialGrades = maxPartialGrades;
             ViewBag.MaxFinalGrades = maxFinalGrades;
             return View("List", usersList);

@@ -20,13 +20,22 @@ namespace dziennik_asp_mvc.Controllers
     [Authorize(Roles = "Administrator,Wykładowca,Student")]
     public class UserController : Controller
     {
+        private ISubjectsService subjectsService;
         private IUsersService usersService;
         private IRolesService rolesService;
+        private IPartialGradesService partialService;
+        private IFinalGradesService finalService;
+        private IGroupsService groupsService;
 
-        public UserController(IUsersService usersService, IRolesService rolesService)
+        public UserController(IUsersService usersService, IRolesService rolesService, ISubjectsService subjectsService, IPartialGradesService partialService, IFinalGradesService finalService,
+            IGroupsService groupsService)
         {
             this.usersService = usersService;
             this.rolesService = rolesService;
+            this.subjectsService = subjectsService;
+            this.partialService = partialService;
+            this.finalService = finalService;
+            this.groupsService = groupsService;
         }
 
         public ActionResult Profile()
@@ -35,11 +44,84 @@ namespace dziennik_asp_mvc.Controllers
             return View(user);
         }
 
+        public ActionResult MyGrades()
+        {
+            Users user = usersService.FindByName(User.Identity.Name);
+            int id_group = (int)user.id_group;
+
+            Groups groups = groupsService.FindById(id_group);
+            IEnumerable<Subjects> subjects = subjectsService.FindAllSubjectsForGroup(id_group);
+
+            List<MyGradesViewModel> viewModel = new List<MyGradesViewModel>();
+            int size = 0;
+
+            foreach (Subjects sub in subjects)
+            {
+                MyGradesViewModel model = new MyGradesViewModel();
+
+                model.user = sub.Users.full_name;
+                model.subject = sub.subject_name;
+
+                foreach (Partial_Grades partialGrade in sub.Partial_Grades)
+                {
+                    if (partialGrade.id_user.CompareTo(user.id_user) == 0)
+                    {
+                        model.partialGrades.Add(partialGrade);
+                        if (model.partialGrades.Count > size)
+                        {
+                            size = model.partialGrades.Count;
+                        }
+                    }
+                }
+
+                if (model.partialGrades.Count == 0)
+                {
+                    model.partialGrades.Add(new Partial_Grades());
+                }
+
+                foreach (Final_Grades finalGrade in sub.Final_Grades)
+                {
+                    if (finalGrade.id_user.CompareTo(user.id_user) == 0)
+                    {
+                        model.finalGrades.Add(finalGrade);
+                    }
+                }
+
+                if (model.finalGrades.Count == 0)
+                {
+                    model.finalGrades.Add(new Final_Grades());
+                }
+
+                viewModel.Add(model);
+            }
+
+            foreach(MyGradesViewModel mod in viewModel)
+            {
+                if(mod.partialGrades.Count < size){
+                    while(size > mod.partialGrades.Count){
+                        mod.partialGrades.Add(new Partial_Grades());
+                    }
+                }
+            }
+
+            ViewBag.Size = size;
+
+            return View("MyGrades", viewModel);
+        }
+
+        public ActionResult MySubjects()
+        {
+            Users user = usersService.FindByName(User.Identity.Name);
+            int id_group = (int)user.id_group;
+            return View("MySubjects", subjectsService.FindAllSubjectsForGroup(id_group));
+        }
+
         public ActionResult UserProfile(int id)
         {
             Users user = null;
             try
             {
+
                 user = usersService.FindById(id);
 
             }
@@ -50,7 +132,7 @@ namespace dziennik_asp_mvc.Controllers
                 return RedirectToAction("Profile");
             }
 
-            return View("Profile", user);
+            return View("UserProfile", user);
         }
 
         [HttpPost]
@@ -86,9 +168,9 @@ namespace dziennik_asp_mvc.Controllers
             }
 
             TempData["Status"] = "success";
-            TempData["Msg"] = "Udało się pomyślnie zaktualizować profilu!";
+            TempData["Msg"] = "Udało się pomyślnie zaktualizować profil!";
 
-            return RedirectToAction("UserProfile", new { id = foundUser.id_user});
+            return RedirectToAction("UserProfile", new { id = foundUser.id_user });
         }
 
         [HttpPost]

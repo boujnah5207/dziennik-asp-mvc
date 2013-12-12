@@ -32,7 +32,7 @@ namespace dziennik_asp_mvc.Models.Entities
         [NotMapped]
         public string description
         {
-            get { return "Ocena: " + this.grade + "\n Data: " + this.date + "\n Uwagi:" + this.comment; }
+            get { return "Ocena: " + this.grade + "\nData: " + this.date + "\nUwagi:" + this.comment; }
         }
 
         public virtual Crediting_Form Crediting_Form { get; set; }

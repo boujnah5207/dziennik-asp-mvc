@@ -14,6 +14,20 @@ namespace dziennik_asp_mvc
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+             name: "MySubjects",
+             url: "User/MySubjects",
+             defaults: new { controller = "User", action = "MySubjects" },
+             namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
+           );
+
+            routes.MapRoute(
+              name: "MyGrades",
+              url: "User/MyGrades",
+              defaults: new { controller = "User", action = "MyGrades" },
+              namespaces: new string[] { "dziennik-asp-mvc.Controllers" }
+            );
+    
+            routes.MapRoute(
                 name: "userProfile",
                 url: "Users/{id}/Profile",
                 defaults: new { controller = "User", action = "UserProfile" },

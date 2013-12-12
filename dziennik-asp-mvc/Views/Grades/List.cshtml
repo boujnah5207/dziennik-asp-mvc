@@ -54,14 +54,18 @@
             {
                 <tr>
                     <td style="text-align: center; vertical-align: middle;">@item.full_name</td>
+                    @if (@ViewBag.MaxPartialGrades == 0)
+                    {
+                        <td style="text-align: center; vertical-align: middle;" />
+                    }
 
-                    @foreach (var partial in item.Partial_Grades)
+                    @foreach (var partial in item.Partial_Grades.Where(m => m.id_subject == @ViewBag.Subject))
                     {
                         <td style="text-align: center; vertical-align: middle;">
-                            <span>@partial.grade</span>
-
-                            @if (partial.grade != null)
+                            @if (partial.grade != null && @ViewBag.Subject == partial.id_subject)
                             {
+                                <span>@partial.grade</span>
+
                                 <a class="btn btn-info btn-xs" title="@{@partial.description}">
                                     <span class="icon-white glyphicon glyphicon-info-sign" style="margin:0px !important;padding: 0px 0px !important;" />
                                 </a>
@@ -74,28 +78,19 @@
                             }
                         </td>
                     }
-                    @if (item.Partial_Grades.Count == 0)
+                                        
+                    @for (int i = 0; i < ViewBag.MaxPartialGrades - item.Partial_Grades.Count(m => m.id_subject == @ViewBag.Subject); i++)
                     {
-                        if (@ViewBag.MaxPartialGrades == 0)
-                        {
-                            <td style="text-align: center; vertical-align: middle;" />
-                        }
-                        else
-                        {
-                            for (int i = 0; i < ViewBag.MaxPartialGrades; i++)
-                            {
-                                <td style="text-align: center; vertical-align: middle;" />
-                            }
-                        }
-                    }
-
+                        <td style="text-align: center; vertical-align: middle;" />
+                    }  
+                    
                     @foreach (var final in item.Final_Grades)
                     {
                         <td style="text-align: center; vertical-align: middle;">
-                            <span>@final.grade</span>
-
-                            @if (final.grade != null)
+                            @if (final.grade != null && @ViewBag.Subject == final.id_subject)
                             {
+                                <span>@final.grade</span>
+
                                 <a class="btn btn-info btn-xs" title="@{@final.description}">
                                     <span class="icon-white glyphicon glyphicon-info-sign" style="margin:0px !important;padding: 0px 0px !important;" />
                                 </a>

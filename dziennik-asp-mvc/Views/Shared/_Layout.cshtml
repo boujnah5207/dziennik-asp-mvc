@@ -21,12 +21,29 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Oceny", "List", "Grades")</li>
-                    <li>@Html.RouteLink("Formy zaliczeń", "creditingFormList")</li>
-                    <li>@Html.RouteLink("Wykładowcy","teachersList")</li>
-                    <li>@Html.RouteLink("Studenci", "studentsList")</li>
-                    <li>@Html.RouteLink("Przedmioty", "subjectsList")</li>
-                    <li>@Html.ActionLink("Grupy", "List", "Groups")</li>
+                    @if (User.IsInRole("Wykładowca"))
+                    {
+                        <li>@Html.ActionLink("Oceny", "List", "Grades")</li>
+                        <li>@Html.RouteLink("Formy zaliczeń", "creditingFormList")</li>
+                        <li>@Html.RouteLink("Wykładowcy", "teachersList")</li>
+                        <li>@Html.RouteLink("Studenci", "studentsList")</li>
+                        <li>@Html.RouteLink("Przedmioty", "subjectsList")</li>
+                    }
+
+                    @if (User.IsInRole("Administrator"))
+                    {
+                        <li>@Html.RouteLink("Wykładowcy", "teachersList")</li>
+                        <li>@Html.RouteLink("Studenci", "studentsList")</li>
+                        <li>@Html.RouteLink("Przedmioty", "subjectsList")</li>
+                        <li>@Html.ActionLink("Grupy", "List", "Groups")</li>
+                    }
+
+                    @if (User.IsInRole("Student"))
+                    {
+                        <li>@Html.RouteLink("Oceny", "MyGrades")</li>
+                        <li>@Html.RouteLink("Wykładowcy", "teachersList")</li>
+                        <li>@Html.RouteLink("Przedmioty", "MySubjects")</li>
+                    }
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
@@ -36,7 +53,7 @@
                     </li>
                     <li class="divider" />
                     <li>
-                        <span class="glyphicon glyphicon-off" style="float: left;margin-top: 16px;" ></span>
+                        <span class="glyphicon glyphicon-off" style="float: left;margin-top: 16px;"></span>
                         @Html.ActionLink("Wyloguj", "Logout", "Account")
                     </li>
                 </ul>
@@ -58,10 +75,10 @@
                     <p class="status">@TempData["Msg"]</p>
                 </div>
             }
-        }      
-              
+        }
+
         @RenderBody()
-    
+
     </div>
 
     @Scripts.Render("~/bundles/jquery")

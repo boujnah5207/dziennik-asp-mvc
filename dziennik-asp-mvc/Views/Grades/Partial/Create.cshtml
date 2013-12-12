@@ -54,7 +54,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.grade.date, new { @class = "col-lg-2 control-label" })
                     <div class="col-lg-3">
-                        @Html.TextBoxFor(model => model.grade.date, new { @class = "form-control", @placeholder = "Data..." })
+                        @Html.TextBoxFor(model => model.grade.date, new { @id = "gradeDate", @class = "form-control", @placeholder = "Data...", @readonly = "readonly" })
                         @Html.ValidationMessageFor(model => model.grade.date)
                     </div>
                 </div>
