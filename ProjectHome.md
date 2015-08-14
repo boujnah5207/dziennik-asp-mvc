@@ -1,0 +1,1 @@
+Teachers registry written in ASP.NET MVC 5 with bootstrap, chosen, Entity Framework
